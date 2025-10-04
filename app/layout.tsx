@@ -19,11 +19,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const themeScript = `
+  try{
+  const ls = localStorage.getItem('theme');
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = ls || (systemDark ? 'dark' : 'light'); 
+  const root = document.documentElement;
+  if(theme === 'dark') root.classList.add('dark'); else root.classList.remove('dark');
+  root.style.colorScheme = theme;
+  }catch{}
+  `;
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }}></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
